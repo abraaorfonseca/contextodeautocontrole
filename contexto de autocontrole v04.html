@@ -1,0 +1,813 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mestre Abraão -- Dia 12</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--neon:#00e5ff;--deep:#060a13;--card:#0d1321;--surface:#111827;--urgent:#ef4444;--reading:#a855f7;--health:#22c55e;--warn:#f59e0b}
+*{margin:0;padding:0;box-sizing:border-box;scrollbar-width:thin;scrollbar-color:#1e293b #060a13}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#060a13}::-webkit-scrollbar-thumb{background:#1e293b;border-radius:3px}
+body{font-family:'Rajdhani',sans-serif;background:var(--deep);color:#e2e8f0;overflow-x:hidden;min-height:100vh}
+
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(0,229,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.03) 1px,transparent 1px);background-size:60px 60px}
+.bg-glow-1{position:fixed;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,229,255,.06),transparent 70%);top:-200px;right:-100px;z-index:0;pointer-events:none}
+.bg-glow-2{position:fixed;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(239,68,68,.04),transparent 70%);bottom:-150px;left:-100px;z-index:0;pointer-events:none}
+.scanline{position:fixed;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,229,255,.008) 2px,rgba(0,229,255,.008) 4px)}
+.scan-beam{position:fixed;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,229,255,.15),transparent);z-index:1;pointer-events:none;animation:scanBeam 8s linear infinite}
+@keyframes scanBeam{0%{top:-2px}100%{top:100vh}}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:var(--deep)}
+.login-card{position:relative;width:420px;max-width:92vw;padding:48px 40px;border:1px solid rgba(0,229,255,.2);border-radius:2px;background:rgba(13,19,33,.9);backdrop-filter:blur(20px)}
+.login-card::before,.login-card::after{content:'';position:absolute;width:20px;height:20px;border-color:var(--neon);border-style:solid}
+.login-card::before{top:-1px;left:-1px;border-width:2px 0 0 2px}
+.login-card::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0}
+.login-title{text-align:center;font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:700;letter-spacing:4px;color:var(--neon);margin-bottom:4px}
+.login-sub{text-align:center;font-size:.8rem;color:#475569;margin-bottom:8px;letter-spacing:2px}
+.login-hint{text-align:center;font-size:.72rem;color:#334155;margin-bottom:28px;padding:6px 12px;border:1px dashed #1e293b;border-radius:2px}
+.input-group{position:relative;margin-bottom:18px}
+.input-group i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#475569;font-size:.85rem}
+.input-group input{width:100%;padding:12px 14px 12px 40px;background:rgba(6,10,19,.9);border:1px solid #1e293b;border-radius:2px;color:#e2e8f0;font-family:'Rajdhani',sans-serif;font-size:1rem;transition:all .3s}
+.input-group input:focus{outline:none;border-color:var(--neon);box-shadow:0 0 12px rgba(0,229,255,.15)}
+.input-group input::placeholder{color:#3e4a5c}
+.login-btn{width:100%;padding:14px;background:transparent;border:1px solid var(--neon);color:var(--neon);font-family:'Orbitron',monospace;font-size:.8rem;font-weight:600;letter-spacing:3px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.login-btn:hover{background:rgba(0,229,255,.1);box-shadow:0 0 30px rgba(0,229,255,.2)}
+.login-btn::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,229,255,.1),transparent);transition:left .5s}
+.login-btn:hover::after{left:100%}
+.login-error{color:var(--urgent);font-size:.8rem;text-align:center;margin-top:12px;min-height:20px}
+.shake{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+
+/* LOADING */
+#loadingScreen{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;flex-direction:column;background:var(--deep);gap:24px}
+.loading-bar{width:240px;height:2px;background:#1e293b;border-radius:1px;overflow:hidden}
+.loading-bar-inner{height:100%;width:0;background:var(--neon);box-shadow:0 0 10px var(--neon);animation:loadBar 1.5s ease forwards}
+@keyframes loadBar{to{width:100%}}
+.loading-text{font-family:'Orbitron',monospace;font-size:.65rem;color:#475569;letter-spacing:4px;animation:loadPulse 1s ease infinite}
+@keyframes loadPulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* APP */
+#mainApp{display:none;min-height:100vh;position:relative;z-index:2}
+#sidebar{position:fixed;left:0;top:0;bottom:0;width:280px;background:rgba(13,19,33,.97);backdrop-filter:blur(10px);border-right:1px solid rgba(0,229,255,.1);z-index:50;display:flex;flex-direction:column;transition:transform .3s ease}
+#sidebarOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40}
+.sidebar-brand{text-align:center;padding:24px 20px 4px;font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;color:var(--neon);letter-spacing:4px;line-height:1.2;text-shadow:0 0 20px rgba(0,229,255,.3)}
+.sidebar-subbrand{text-align:center;font-family:'Orbitron',monospace;font-size:.55rem;font-weight:600;letter-spacing:5px;color:#334155;margin-bottom:20px}
+.sidebar-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,229,255,.15),transparent);margin:8px 20px}
+.sidebar-section{padding:14px 20px 4px;font-family:'Orbitron',monospace;font-size:.5rem;letter-spacing:3px;color:#334155}
+.sidebar-nav{flex:1;overflow-y:auto;padding:4px 0}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 20px;cursor:pointer;transition:all .2s;font-size:.92rem;font-weight:500;color:#94a3b8;border-left:2px solid transparent;text-decoration:none}
+.nav-item:hover{background:rgba(0,229,255,.05);color:#e2e8f0}
+.nav-item.active{background:rgba(0,229,255,.08);color:var(--neon);border-left-color:var(--neon)}
+.nav-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(0,229,255,.06)}
+.role-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:2px;font-size:.72rem;font-weight:600;letter-spacing:1px}
+.role-mestre{background:rgba(0,229,255,.1);color:var(--neon);border:1px solid rgba(0,229,255,.2)}
+.role-aprendiz{background:rgba(148,163,184,.1);color:#94a3b8;border:1px solid rgba(148,163,184,.2)}
+.sidebar-btn{display:flex;align-items:center;gap:8px;padding:7px 12px;margin-top:8px;background:none;border:1px solid #1a2236;color:#4a5568;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:.82rem;border-radius:2px;transition:all .2s;width:100%}
+.sidebar-btn:hover{border-color:#374151;color:#94a3b8}
+
+#mainContent{margin-left:280px;min-height:100vh}
+.top-bar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:16px;padding:16px 32px;background:rgba(6,10,19,.9);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,229,255,.06)}
+.top-bar h1{font-family:'Orbitron',monospace;font-size:.8rem;font-weight:600;letter-spacing:2px;flex:1}
+.system-status{display:flex;align-items:center;gap:6px;font-size:.6rem;color:#334155;font-family:'Orbitron',monospace;letter-spacing:1px}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--health);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 4px var(--health)}50%{opacity:.5;box-shadow:0 0 8px var(--health)}}
+.hamburger{display:none;background:none;border:1px solid #1e293b;color:#94a3b8;padding:8px 10px;cursor:pointer;border-radius:2px;font-size:1rem}
+.content-area{padding:32px}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.stat-card{position:relative;padding:18px;background:rgba(13,19,33,.8);border:1px solid #1a2236;border-radius:2px;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat-card.st-total::before{background:var(--neon)}.stat-card.st-done::before{background:var(--health)}.stat-card.st-prog::before{background:var(--warn)}.stat-card.st-pend::before{background:var(--urgent)}
+.stat-value{font-family:'Orbitron',monospace;font-size:1.8rem;font-weight:800;line-height:1}
+.stat-label{font-size:.75rem;color:#4a5568;margin-top:4px;letter-spacing:1px}
+.global-progress{margin-bottom:28px;padding:22px;background:rgba(13,19,33,.8);border:1px solid rgba(0,229,255,.1);border-radius:2px}
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.progress-label{font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:2px;color:#64748b}
+.progress-pct{font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:700;color:var(--neon)}
+.progress-track{height:5px;background:#1a2236;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--neon),#00ffaa);border-radius:3px;transition:width .8s ease;box-shadow:0 0 10px rgba(0,229,255,.35)}
+
+/* AXIS CARDS */
+.axes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px;margin-bottom:28px}
+.axis-card{position:relative;padding:22px;background:rgba(13,19,33,.8);border:1px solid #1a2236;border-radius:2px;cursor:pointer;transition:all .3s;overflow:hidden}
+.axis-card:hover{border-color:rgba(0,229,255,.25);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.axis-card::before,.axis-card::after{content:'';position:absolute;width:14px;height:14px;transition:border-color .3s}
+.axis-card::before{top:-1px;left:-1px;border-top:2px solid #1a2236;border-left:2px solid #1a2236}
+.axis-card::after{bottom:-1px;right:-1px;border-bottom:2px solid #1a2236;border-right:2px solid #1a2236}
+.axis-card:hover::before,.axis-card:hover::after{border-color:var(--neon)}
+.axis-desc{font-size:.82rem;color:#4a5568;margin-bottom:14px;line-height:1.5}
+.axis-name{font-family:'Orbitron',monospace;font-size:.7rem;font-weight:600;letter-spacing:1px;line-height:1.4;margin-top:10px}
+.axis-card-progress{display:flex;align-items:center;gap:12px;margin-top:14px}
+.axis-progress-track{flex:1;height:3px;background:#1a2236;border-radius:2px;overflow:hidden}
+.axis-progress-fill{height:100%;border-radius:2px;transition:width .6s ease}
+.axis-progress-pct{font-family:'Orbitron',monospace;font-size:.65rem;font-weight:600;min-width:34px;text-align:right}
+.axis-task-count{font-size:.72rem;color:#334155;margin-top:6px}
+
+/* BOOK CARD */
+.book-card{display:flex;gap:24px;padding:26px;background:linear-gradient(135deg,rgba(168,85,247,.07),rgba(13,19,33,.9));border:1px solid rgba(168,85,247,.18);border-radius:2px;align-items:center;margin-bottom:28px}
+.book-icon{width:76px;height:104px;background:linear-gradient(135deg,#6d28d9,#a855f7);border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:white;flex-shrink:0;box-shadow:4px 4px 0 rgba(168,85,247,.25)}
+.book-title{font-family:'Orbitron',monospace;font-size:.8rem;font-weight:700;color:#c084fc;margin-bottom:3px}
+.book-author{font-size:.82rem;color:#6b7280;margin-bottom:10px}
+.book-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 22px;background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.25);color:#c084fc;font-family:'Orbitron',monospace;font-size:.65rem;font-weight:600;letter-spacing:2px;text-decoration:none;transition:all .3s;border-radius:2px}
+.book-btn:hover{background:rgba(168,85,247,.22);box-shadow:0 0 20px rgba(168,85,247,.18);transform:translateY(-1px)}
+
+/* AXIS DETAIL */
+.axis-detail-title{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;letter-spacing:2px;margin-bottom:8px}
+.axis-detail-desc{font-size:.9rem;color:#4a5568;line-height:1.6;max-width:700px}
+.axis-stats{display:flex;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.axis-stat{display:flex;align-items:center;gap:6px;padding:5px 13px;background:rgba(13,19,33,.8);border:1px solid #1a2236;border-radius:2px;font-size:.78rem;color:#94a3b8}
+.axis-stat strong{color:#e2e8f0}
+.section-label{font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:3px;color:#334155;margin-bottom:14px}
+
+/* TASKS */
+.task-list{display:flex;flex-direction:column;gap:8px}
+.task-row{display:flex;align-items:center;gap:12px;padding:14px 18px;background:rgba(13,19,33,.5);border:1px solid #1a2236;border-radius:2px;transition:all .3s;flex-wrap:wrap}
+.task-row:hover{border-color:rgba(0,229,255,.12);background:rgba(13,19,33,.8)}
+.task-row.completed{opacity:.5}.task-row.completed .task-text{text-decoration:line-through}
+.task-checkbox{width:20px;height:20px;border:2px solid #2d3748;border-radius:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.task-checkbox:hover{border-color:var(--neon)}
+.task-checkbox.checked{background:var(--neon);border-color:var(--neon)}
+.task-checkbox.checked i{color:var(--deep);font-size:.6rem}
+.task-text{flex:1;min-width:180px;font-size:.92rem;line-height:1.4}
+.task-controls{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.task-select{padding:4px 8px;background:rgba(6,10,19,.9);border:1px solid #1a2236;color:#94a3b8;font-family:'Rajdhani',sans-serif;font-size:.78rem;border-radius:2px;cursor:pointer}
+.task-select:focus{outline:none;border-color:var(--neon)}
+.task-date{padding:4px 8px;background:rgba(6,10,19,.9);border:1px solid #1a2236;color:#94a3b8;font-family:'Rajdhani',sans-serif;font-size:.78rem;border-radius:2px;color-scheme:dark}
+.task-date:focus{outline:none;border-color:var(--neon)}
+.task-tag{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.task-notes-btn{background:none;border:1px solid #1a2236;color:#334155;padding:4px 10px;cursor:pointer;font-size:.72rem;border-radius:2px;transition:all .2s;display:flex;align-items:center;gap:4px;font-family:'Rajdhani',sans-serif}
+.task-notes-btn:hover{border-color:var(--neon);color:var(--neon)}
+.task-notes-btn.has-notes{border-color:rgba(0,229,255,.25);color:var(--neon)}
+
+/* MODAL */
+#modalOverlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center}
+#modalBox{width:480px;max-width:92vw;padding:30px;background:var(--card);border:1px solid rgba(0,229,255,.18);border-radius:2px}
+.modal-title{font-family:'Orbitron',monospace;font-size:.75rem;font-weight:600;letter-spacing:2px;color:var(--neon);margin-bottom:18px}
+.modal-textarea{width:100%;min-height:150px;padding:12px;background:rgba(6,10,19,.9);border:1px solid #1a2236;color:#e2e8f0;font-family:'Rajdhani',sans-serif;font-size:.92rem;border-radius:2px;resize:vertical;line-height:1.6}
+.modal-textarea:focus{outline:none;border-color:var(--neon)}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.modal-btn{padding:7px 18px;font-family:'Orbitron',monospace;font-size:.6rem;font-weight:600;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all .2s}
+.modal-btn-cancel{background:none;border:1px solid #2d3748;color:#4a5568}
+.modal-btn-cancel:hover{border-color:#475569;color:#94a3b8}
+.modal-btn-save{background:rgba(0,229,255,.08);border:1px solid var(--neon);color:var(--neon)}
+.modal-btn-save:hover{background:rgba(0,229,255,.18)}
+.confirm-text{font-size:.95rem;color:#94a3b8;line-height:1.6;margin-bottom:6px}
+.confirm-warn{color:var(--urgent);font-size:.82rem}
+
+/* TOAST */
+#toastContainer{position:fixed;top:20px;right:20px;z-index:400;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{padding:12px 18px;background:rgba(13,19,33,.95);border:1px solid #1a2236;border-radius:2px;backdrop-filter:blur(10px);display:flex;align-items:center;gap:10px;font-size:.85rem;animation:toastIn .3s ease;min-width:260px;pointer-events:auto}
+.toast.toast-out{animation:toastOut .3s ease forwards}
+.toast-success{border-color:rgba(34,197,94,.3);color:var(--health)}
+.toast-error{border-color:rgba(239,68,68,.3);color:var(--urgent)}
+.toast-info{border-color:rgba(0,229,255,.3);color:var(--neon)}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(40px)}}
+
+.back-btn{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;background:none;border:1px solid #1a2236;color:#4a5568;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:.88rem;border-radius:2px;transition:all .2s;margin-bottom:22px}
+.back-btn:hover{border-color:var(--neon);color:var(--neon)}
+
+.fade-in{animation:fadeIn .4s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.st1{animation-delay:.05s}.st2{animation-delay:.1s}.st3{animation-delay:.15s}.st4{animation-delay:.2s}.st5{animation-delay:.25s}.st6{animation-delay:.3s}.st7{animation-delay:.35s}
+
+@media(max-width:768px){
+  #sidebar{transform:translateX(-100%)}#sidebar.open{transform:translateX(0)}#sidebarOverlay.show{display:block}
+  #mainContent{margin-left:0}.hamburger{display:block}.top-bar{padding:12px 16px}
+  .content-area{padding:18px 14px}.stats-row{grid-template-columns:repeat(2,1fr);gap:10px}
+  .axes-grid{grid-template-columns:1fr}.book-card{flex-direction:column;text-align:center}
+  .task-row{flex-direction:column;align-items:flex-start}.task-controls{width:100%}
+}
+@media(max-width:480px){.stats-row{gap:8px}.stat-card{padding:12px}.stat-value{font-size:1.4rem}.login-card{padding:30px 22px}}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow-1"></div>
+<div class="bg-glow-2"></div>
+<div class="scanline"></div>
+<div class="scan-beam"></div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card" id="loginCard">
+    <svg viewBox="0 0 200 100" style="width:180px;margin:0 auto 16px;display:block" aria-label="Logo Mestre Abraão">
+      <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00e5ff"/><stop offset="100%" stop-color="#008fa3"/></linearGradient></defs>
+      <text x="100" y="38" text-anchor="middle" font-family="Orbitron,monospace" font-weight="900" font-size="22" fill="url(#g1)" letter-spacing="6">MESTRE</text>
+      <text x="100" y="68" text-anchor="middle" font-family="Orbitron,monospace" font-weight="900" font-size="22" fill="url(#g1)" letter-spacing="6">ABRAAO</text>
+      <line x1="30" y1="48" x2="170" y2="48" stroke="#00e5ff" stroke-width="1.5" opacity=".4"/>
+      <line x1="40" y1="51" x2="160" y2="51" stroke="#00e5ff" stroke-width=".5" opacity=".2"/>
+    </svg>
+    <div class="login-title">SISTEMA DE CONTROLE</div>
+    <div class="login-sub">DIA 12 DO TREINAMENTO</div>
+    <div class="login-hint"><i class="fas fa-key" style="margin-right:4px"></i> Senha: <strong style="color:#64748b">dia12</strong></div>
+    <form id="loginForm">
+      <div class="input-group">
+        <i class="fas fa-user"></i>
+        <input type="email" id="loginEmail" placeholder="E-mail autorizado" required autocomplete="email">
+      </div>
+      <div class="input-group">
+        <i class="fas fa-lock"></i>
+        <input type="password" id="loginPassword" placeholder="Senha de acesso" required>
+      </div>
+      <button type="submit" class="login-btn">AUTENTICAR</button>
+      <div class="login-error" id="loginError"></div>
+    </form>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="loadingScreen">
+  <div class="loading-bar"><div class="loading-bar-inner"></div></div>
+  <div class="loading-text">CARREGANDO SISTEMA</div>
+</div>
+
+<!-- APP -->
+<div id="mainApp">
+  <div id="sidebarOverlay"></div>
+  <aside id="sidebar">
+    <div class="sidebar-brand">MESTRE ABRAAO</div>
+    <div class="sidebar-subbrand">PAINEL DE CONTROLE</div>
+    <div class="sidebar-divider"></div>
+    <nav class="sidebar-nav" id="sidebarNav">
+      <div class="sidebar-section">VISAO GERAL</div>
+      <div class="nav-item active" data-view="dashboard" id="navDashboard">
+        <i class="fas fa-th-large" style="width:18px;text-align:center;font-size:.78rem"></i><span>Painel</span>
+      </div>
+      <div class="sidebar-divider" style="margin-top:10px"></div>
+      <div class="sidebar-section">EIXOS DE TREINAMENTO</div>
+      <div id="sidebarAxes"></div>
+      <div class="sidebar-divider" style="margin-top:10px"></div>
+      <div class="sidebar-section">RECURSOS</div>
+      <a href="https://amzn.to/496i3Ok" target="_blank" rel="noopener" class="nav-item" style="text-decoration:none">
+        <i class="fas fa-book" style="width:18px;text-align:center;font-size:.78rem;color:#a855f7"></i><span>Admiravel Mundo Novo</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div id="roleBadge"></div>
+      <button class="sidebar-btn" id="btnReset"><i class="fas fa-rotate-left"></i>Resetar Dados</button>
+      <button class="sidebar-btn" id="btnLogout"><i class="fas fa-sign-out-alt"></i>Sair do Sistema</button>
+    </div>
+  </aside>
+  <div id="mainContent">
+    <header class="top-bar">
+      <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
+      <h1 id="topBarTitle">PAINEL DE CONTROLE</h1>
+      <div class="system-status"><div class="status-dot"></div>SISTEMA ATIVO</div>
+    </header>
+    <div class="content-area" id="contentArea"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modalOverlay">
+  <div id="modalBox">
+    <div class="modal-title" id="modalTitle"></div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div id="toastContainer"></div>
+
+<script>
+/* ============================================================
+   CONSTANTES
+   ============================================================ */
+var ALLOWED = ['contato@mestreabraao.com','andreviana.controle@gmail.com'];
+var PASS = 'dia12';
+var SKEY = 'mestreabraao_dia12';
+var CKEY = 'mestreabraao_sess';
+var TAGC = {vermelho:'#ef4444',roxo:'#a855f7',verde:'#22c55e',padrao:'#00e5ff'};
+var SCOLOR = {pendente:'#4a5568',em_curso:'#f59e0b',concluido:'#22c55e'};
+
+/* ============================================================
+   DADOS PADRÃO
+   ============================================================ */
+function defaultData(){
+  return {axes:[
+    {id:1,name:'Condicao de Controle de Outrem',tag:'vermelho',
+     description:'Identificar e mapear situacoes onde terceiros exercem influencia ou controle sobre suas decisoes e comportamentos diarios.',
+     tasks:[
+       {id:'1-1',text:'Mapear influencias externas que afetam suas decisoes diarias',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'vermelho'},
+       {id:'1-2',text:'Identificar pelo menos 2 situacoes onde cedeu controle a terceiros',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'vermelho'},
+       {id:'1-3',text:'Documentar estrategias usadas para recuperar autonomia',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'vermelho'},
+       {id:'1-4',text:'Registrar gatilhos emocionais que facilitam controle externo',status:'pendente',responsible:'Mestre',date:'',notes:'',tag:'vermelho'},
+       {id:'1-5',text:'Avaliar qualidade dos boundaries estabelecidos',status:'pendente',responsible:'Mestre',date:'',notes:'',tag:'vermelho'}
+     ]},
+    {id:2,name:'Desenvolvimento e Controle Financeiro',tag:'vermelho',
+     description:'Disciplina financeira diaria: registro de entradas, saidas e planejamento orcamentario.',
+     tasks:[
+       {id:'2-1',text:'Registrar todas as entradas e saidas do dia',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'vermelho'},
+       {id:'2-2',text:'Atualizar planilha de controle orcamentario',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'vermelho'},
+       {id:'2-3',text:'Revisar metas de economia semanais',status:'pendente',responsible:'Mestre',date:'',notes:'',tag:'vermelho'},
+       {id:'2-4',text:'Identificar e eliminar pelo menos 1 gasto dispensavel',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'vermelho'},
+       {id:'2-5',text:'Documentar progresso em relacao a meta mensal',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'vermelho'}
+     ]},
+    {id:3,name:'Automedicacao',tag:'vermelho',
+     description:'Autoconsciencia sobre padroes de automedicacao e desenvolvimento de estrategias de regulacao emocional saudaveis.',
+     tasks:[
+       {id:'3-1',text:'Registrar uso de qualquer substancia psicoativa',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'vermelho'},
+       {id:'3-2',text:'Avaliar estado emocional sem recurso a substancias',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'vermelho'},
+       {id:'3-3',text:'Praticar pelo menos 1 tecnica de regulacao emocional',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'vermelho'},
+       {id:'3-4',text:'Documentar gatilhos que levam a automedicacao',status:'pendente',responsible:'Mestre',date:'',notes:'',tag:'vermelho'},
+       {id:'3-5',text:'Registrar qualidade do sono e seu impacto no dia',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'verde'}
+     ]},
+    {id:4,name:'Inventario de Aparelhos',tag:'padrao',
+     description:'Auditoria tecnologica: mapear dispositivos, tempos de uso e estabelecer limites conscientes.',
+     tasks:[
+       {id:'4-1',text:'Listar todos os dispositivos eletronicos sob seu controle',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'padrao'},
+       {id:'4-2',text:'Registrar tempo de uso por dispositivo (horas)',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'padrao'},
+       {id:'4-3',text:'Avaliar necessidade real vs. uso compulsivo de cada aparelho',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'padrao'},
+       {id:'4-4',text:'Definir e aplicar limites de tempo para redes sociais',status:'pendente',responsible:'Mestre',date:'',notes:'',tag:'padrao'},
+       {id:'4-5',text:'Documentar como o uso de aparelhos afeta produtividade',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'padrao'}
+     ]},
+    {id:5,name:'Testagem e Exposicao',tag:'vermelho',
+     description:'Exposicao gradual a situacoes de desconforto para desenvolvimento de tolerancia e resiliencia.',
+     tasks:[
+       {id:'5-1',text:'Identificar 1 situacao de desconforto para exposicao gradual',status:'pendente',responsible:'Mestre',date:'',notes:'',tag:'vermelho'},
+       {id:'5-2',text:'Executar a exposicao planeada e registrar resposta',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'vermelho'},
+       {id:'5-3',text:'Avaliar intensidade do desconforto antes e depois (Escala 0-10)',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'vermelho'},
+       {id:'5-4',text:'Praticar tolerancia ao desconforto por pelo menos 15 minutos',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'vermelho'},
+       {id:'5-5',text:'Comparar progresso com o dia anterior e registrar evolucao',status:'pendente',responsible:'Mestre',date:'',notes:'',tag:'vermelho'}
+     ]},
+    {id:6,name:'Leitura Conjunta',tag:'roxo',
+     description:'Leitura guiada de "Admiravel Mundo Novo" de Aldous Huxley, com anotacoes e reflexoes criticas.',
+     tasks:[
+       {id:'6-1',text:'Ler o capitulo designado do livro',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'roxo'},
+       {id:'6-2',text:'Registrar 3 citacoes ou passagens relevantes',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'roxo'},
+       {id:'6-3',text:'Escrever reflexao pessoal sobre o conteudo lido',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'roxo'},
+       {id:'6-4',text:'Identificar paralelos entre a obra e a realidade atual',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'roxo'},
+       {id:'6-5',text:'Preparar 2 perguntas para discussao com o Mestre',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'roxo'}
+     ]},
+    {id:7,name:'Refeicao e Treino',tag:'verde',
+     description:'Registro nutricional completo e execucao do treino do dia, com monitoramento de energia e recuperacao.',
+     tasks:[
+       {id:'7-1',text:'Registrar todas as refeicoes (horario, composicao, calorias estimadas)',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'verde'},
+       {id:'7-2',text:'Avaliar aderencia ao plano alimentar definido',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'verde'},
+       {id:'7-3',text:'Executar o treino completo do dia',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'verde'},
+       {id:'7-4',text:'Registrar volume total (series x repeticoes x carga)',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'verde'},
+       {id:'7-5',text:'Avaliar nivel de energia, recuperacao e qualidade do sono',status:'pendente',responsible:'Aprendiz',date:'',notes:'',tag:'verde'}
+     ]}
+  ]};
+}
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+var D = null;        // dados
+var CU = null;       // current user
+var CV = 'dashboard';
+var CA = null;       // current axis id
+
+/* ============================================================
+   UTILITÁRIOS
+   ============================================================ */
+function $(id){return document.getElementById(id)}
+function save(){try{localStorage.setItem(SKEY,JSON.stringify(D))}catch(e){}}
+function load(){try{var s=localStorage.getItem(SKEY);D=s?JSON.parse(s):defaultData()}catch(e){D=defaultData()}}
+function axisProg(a){if(!a.tasks.length)return 0;return Math.round(a.tasks.filter(function(t){return t.status==='concluido'}).length/a.tasks.length*100)}
+function globProg(){var t=0,d=0;D.axes.forEach(function(a){t+=a.tasks.length;d+=a.tasks.filter(function(x){return x.status==='concluido'}).length});return t?Math.round(d/t*100):0}
+function globStats(){var r={total:0,done:0,prog:0,pend:0};D.axes.forEach(function(a){a.tasks.forEach(function(t){r.total++;if(t.status==='concluido')r.done++;else if(t.status==='em_curso')r.prog++;else r.pend++})});return r}
+function tagColor(tag){return TAGC[tag]||TAGC.padrao}
+function sColor(s){return SCOLOR[s]||'#4a5568'}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function toast(msg,type){
+  type=type||'info';
+  var ic={success:'fa-check-circle',error:'fa-exclamation-circle',info:'fa-info-circle'};
+  var el=document.createElement('div');
+  el.className='toast toast-'+type;
+  el.innerHTML='<i class="fas '+(ic[type]||ic.info)+'"></i><span>'+msg+'</span>';
+  $('toastContainer').appendChild(el);
+  setTimeout(function(){el.classList.add('toast-out');setTimeout(function(){el.remove()},300)},3000);
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+function openModal(){ $('modalOverlay').style.display='flex' }
+function closeModal(){ $('modalOverlay').style.display='none' }
+
+/* ============================================================
+   AUTENTICAÇÃO
+   ============================================================ */
+function doLogin(){
+  var email=$('loginEmail').value.trim().toLowerCase();
+  var pass=$('loginPassword').value;
+  var err=$('loginError');
+  var card=$('loginCard');
+
+  if(ALLOWED.indexOf(email)===-1){
+    err.textContent='E-mail nao autorizado no sistema.';
+    card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');
+    return;
+  }
+  if(pass!==PASS){
+    err.textContent='Senha incorreta.';
+    card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');
+    return;
+  }
+
+  err.textContent='';
+  CU={email:email,role:email==='contato@mestreabraao.com'?'Mestre':'Aprendiz'};
+  try{localStorage.setItem(CKEY,JSON.stringify(CU))}catch(e){}
+
+  // Transição para loading
+  $('loginScreen').style.display='none';
+  $('loadingScreen').style.display='flex';
+
+  setTimeout(function(){
+    $('loadingScreen').style.display='none';
+    bootApp();
+  },1600);
+}
+
+function doLogout(){
+  try{localStorage.removeItem(CKEY)}catch(e){}
+  CU=null;
+  $('mainApp').style.display='none';
+  $('loginScreen').style.display='flex';
+  $('loginEmail').value='';
+  $('loginPassword').value='';
+  $('loginError').textContent='';
+}
+
+function checkSess(){
+  try{
+    var s=localStorage.getItem(CKEY);
+    if(s){CU=JSON.parse(s);bootApp();return true}
+  }catch(e){}
+  return false;
+}
+
+/* ============================================================
+   INICIALIZAÇÃO DO APP
+   ============================================================ */
+function bootApp(){
+  try{
+    load();
+    $('loginScreen').style.display='none';
+    $('loadingScreen').style.display='none';
+    $('mainApp').style.display='block';
+    buildSidebar();
+    goView('dashboard');
+  }catch(e){
+    // Fallback: mostrar app mesmo com erro
+    console.error('Erro bootApp:',e);
+    load();
+    $('mainApp').style.display='block';
+    buildSidebar();
+    goView('dashboard');
+  }
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+function buildSidebar(){
+  var h='';
+  D.axes.forEach(function(a){
+    var c=tagColor(a.tag);
+    var p=axisProg(a);
+    h+='<div class="nav-item" data-axis="'+a.id+'" id="navAxis'+a.id+'">'
+      +'<div class="nav-dot" style="background:'+c+';box-shadow:0 0 6px '+c+'"></div>'
+      +'<span style="flex:1;font-size:.85rem">'+a.name+'</span>'
+      +'<span style="font-family:Orbitron;font-size:.58rem;color:'+c+'">'+p+'%</span>'
+      +'</div>';
+  });
+  $('sidebarAxes').innerHTML=h;
+
+  // Badge
+  var rc=CU.role==='Mestre'?'role-mestre':'role-aprendiz';
+  var ri=CU.role==='Mestre'?'fa-crown':'fa-user-graduate';
+  $('roleBadge').innerHTML='<div class="role-badge '+rc+'"><i class="fas '+ri+'"></i>'+CU.role+'</div>'
+    +'<div style="font-size:.68rem;color:#334155;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+CU.email+'</div>';
+
+  // Eventos de navegação dos eixos
+  D.axes.forEach(function(a){
+    var el=$('navAxis'+a.id);
+    if(el) el.addEventListener('click',function(){goView('axis',a.id)});
+  });
+}
+
+/* ============================================================
+   NAVEGAÇÃO
+   ============================================================ */
+function goView(view,axisId){
+  CV=view;
+  if(view==='dashboard'){
+    CA=null;
+    renderDash();
+    $('topBarTitle').textContent='PAINEL DE CONTROLE';
+    $('navDashboard').classList.add('active');
+    D.axes.forEach(function(a){var el=$('navAxis'+a.id);if(el)el.classList.remove('active')});
+  }else if(view==='axis'){
+    CA=axisId;
+    renderAxis(axisId);
+    var ax=D.axes.find(function(a){return a.id===axisId});
+    $('topBarTitle').textContent=ax?ax.name.toUpperCase():'EIXO';
+    $('navDashboard').classList.remove('active');
+    D.axes.forEach(function(a){var el=$('navAxis'+a.id);if(el)el.classList.toggle('active',a.id===axisId)});
+  }
+  closeSB();
+  window.scrollTo(0,0);
+}
+
+function toggleSB(){$('sidebar').classList.toggle('open');$('sidebarOverlay').classList.toggle('show')}
+function closeSB(){$('sidebar').classList.remove('open');$('sidebarOverlay').classList.remove('show')}
+
+/* ============================================================
+   RENDER -- DASHBOARD
+   ============================================================ */
+function renderDash(){
+  var s=globStats();
+  var gp=globProg();
+  var today=new Date();
+  var dias=['Domingo','Segunda','Terca','Quarta','Quinta','Sexta','Sabado'];
+  var meses=['janeiro','fevereiro','marco','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  var dateStr=dias[today.getDay()]+', '+today.getDate()+' de '+meses[today.getMonth()]+' de '+today.getFullYear();
+
+  var h='<div class="fade-in" style="margin-bottom:22px">'
+    +'<div style="font-size:.82rem;color:#4a5568;letter-spacing:1px">'+dateStr+'</div>'
+    +'<div style="font-family:Orbitron;font-size:.6rem;color:#334155;letter-spacing:3px;margin-top:3px">DIA 12 DO TREINAMENTO</div>'
+    +'</div>';
+
+  // Stats
+  h+='<div class="stats-row fade-in st1">'
+    +'<div class="stat-card st-total"><div class="stat-value" style="color:var(--neon)">'+s.total+'</div><div class="stat-label">TOTAL DE TAREFAS</div></div>'
+    +'<div class="stat-card st-done"><div class="stat-value" style="color:var(--health)">'+s.done+'</div><div class="stat-label">CONCLUIDAS</div></div>'
+    +'<div class="stat-card st-prog"><div class="stat-value" style="color:var(--warn)">'+s.prog+'</div><div class="stat-label">EM CURSO</div></div>'
+    +'<div class="stat-card st-pend"><div class="stat-value" style="color:var(--urgent)">'+s.pend+'</div><div class="stat-label">PENDENTES</div></div>'
+    +'</div>';
+
+  // Progresso global
+  h+='<div class="global-progress fade-in st2"><div class="progress-header"><span class="progress-label">PROGRESSO GLOBAL</span><span class="progress-pct">'+gp+'%</span></div><div class="progress-track"><div class="progress-fill" style="width:'+gp+'%"></div></div></div>';
+
+  // Eixos
+  h+='<div class="section-label fade-in st3">EIXOS DE TREINAMENTO</div><div class="axes-grid">';
+  var stClasses=['st3','st4','st5','st5','st6','st6','st7'];
+  D.axes.forEach(function(a,i){
+    var c=tagColor(a.tag);
+    var p=axisProg(a);
+    var dn=a.tasks.filter(function(t){return t.status==='concluido'}).length;
+    h+='<div class="axis-card fade-in '+stClasses[i]+'" data-goto="'+a.id+'">'
+      +'<div style="display:flex;align-items:center;gap:10px">'
+      +'<div class="task-tag" style="background:'+c+';box-shadow:0 0 8px '+c+'"></div>'
+      +'<div style="font-family:Orbitron;font-size:.55rem;font-weight:700;color:#334155;letter-spacing:1px">EIXO '+String(a.id).padStart(2,'0')+'</div>'
+      +'</div>'
+      +'<div class="axis-name" style="color:'+c+'">'+a.name+'</div>'
+      +'<div class="axis-desc">'+a.description+'</div>'
+      +'<div class="axis-card-progress"><div class="axis-progress-track"><div class="axis-progress-fill" style="width:'+p+'%;background:'+c+';box-shadow:0 0 8px '+c+'44"></div></div>'
+      +'<div class="axis-progress-pct" style="color:'+c+'">'+p+'%</div></div>'
+      +'<div class="axis-task-count">'+dn+'/'+a.tasks.length+' tarefas concluidas</div>'
+      +'</div>';
+  });
+  h+='</div>';
+
+  // Livro
+  h+='<div class="section-label fade-in st7">LEITURA OBRIGATORIA</div>'
+    +'<div class="book-card fade-in st7">'
+    +'<div class="book-icon"><i class="fas fa-book-open"></i></div>'
+    +'<div style="flex:1">'
+    +'<div class="book-title">ADMIRAVEL MUNDO NOVO</div>'
+    +'<div class="book-author">Aldous Huxley</div>'
+    +'<div style="font-size:.82rem;color:#4a5568;margin-bottom:14px;line-height:1.5">Obra central do eixo de Leitura Conjunta. Analise critica sobre controle social, condicionamento e liberdade individual.</div>'
+    +'<a href="https://amzn.to/496i3Ok" target="_blank" rel="noopener" class="book-btn"><i class="fas fa-cart-shopping"></i>ADQUIRIR NA AMAZON</a>'
+    +'</div></div>';
+
+  $('contentArea').innerHTML=h;
+
+  // Bind cliques dos cards de eixo (delegação)
+  var cards=$('contentArea').querySelectorAll('.axis-card[data-goto]');
+  cards.forEach(function(card){
+    card.addEventListener('click',function(){
+      goView('axis',parseInt(this.getAttribute('data-goto')));
+    });
+  });
+}
+
+/* ============================================================
+   RENDER -- DETALHE DO EIXO
+   ============================================================ */
+function renderAxis(aid){
+  var a=D.axes.find(function(x){return x.id===aid});
+  if(!a)return;
+  var c=tagColor(a.tag);
+  var p=axisProg(a);
+  var dn=a.tasks.filter(function(t){return t.status==='concluido'}).length;
+  var ip=a.tasks.filter(function(t){return t.status==='em_curso'}).length;
+
+  var h='<button class="back-btn" id="backBtn"><i class="fas fa-chevron-left"></i>Voltar ao Painel</button>'
+    +'<div class="fade-in" style="margin-bottom:22px">'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'
+    +'<div class="task-tag" style="background:'+c+';box-shadow:0 0 10px '+c+';width:12px;height:12px"></div>'
+    +'<div class="axis-detail-title" style="color:'+c+'">EIXO '+String(a.id).padStart(2,'0')+' -- '+a.name.toUpperCase()+'</div>'
+    +'</div>'
+    +'<div class="axis-detail-desc">'+a.description+'</div></div>';
+
+  // Progresso do eixo
+  h+='<div class="global-progress fade-in st1" style="border-color:'+c+'22"><div class="progress-header"><span class="progress-label">PROGRESSO DO EIXO</span><span class="progress-pct" style="color:'+c+'">'+p+'%</span></div><div class="progress-track"><div class="progress-fill" style="width:'+p+'%;background:'+c+';box-shadow:0 0 12px '+c+'66"></div></div></div>';
+
+  // Mini-stats
+  h+='<div class="axis-stats fade-in st2">'
+    +'<div class="axis-stat"><i class="fas fa-check-circle" style="color:var(--health)"></i><strong>'+dn+'</strong> concluidas</div>'
+    +'<div class="axis-stat"><i class="fas fa-spinner" style="color:var(--warn)"></i><strong>'+ip+'</strong> em curso</div>'
+    +'<div class="axis-stat"><i class="fas fa-list" style="color:#334155"></i><strong>'+a.tasks.length+'</strong> total</div>'
+    +'</div>';
+
+  // Livro no eixo 6
+  if(a.id===6){
+    h+='<div class="book-card fade-in st2">'
+      +'<div class="book-icon"><i class="fas fa-book-open"></i></div>'
+      +'<div style="flex:1"><div class="book-title">ADMIRAVEL MUNDO NOVO</div><div class="book-author">Aldous Huxley</div>'
+      +'<a href="https://amzn.to/496i3Ok" target="_blank" rel="noopener" class="book-btn" style="margin-top:8px"><i class="fas fa-cart-shopping"></i>ADQUIRIR NA AMAZON</a></div></div>';
+  }
+
+  h+='<div class="section-label fade-in st3">TAREFAS DO EIXO</div><div class="task-list">';
+  var stC=['st3','st3','st4','st4','st5'];
+  a.tasks.forEach(function(t,i){
+    var done=t.status==='concluido';
+    var tc=tagColor(t.tag);
+    var sc=sColor(t.status);
+    var hn=t.notes&&t.notes.trim().length>0;
+    h+='<div class="task-row fade-in '+stC[i]+' '+(done?'completed':'')+'" data-tid="'+t.id+'">'
+      +'<div class="task-tag" style="background:'+tc+';box-shadow:0 0 6px '+tc+'55"></div>'
+      +'<div class="task-checkbox '+(done?'checked':'')+'" data-chk="'+a.id+'|'+t.id+'" title="Alternar conclusao">'
+      +(done?'<i class="fas fa-check"></i>':'')
+      +'</div>'
+      +'<div class="task-text">'+t.text+'</div>'
+      +'<div class="task-controls">'
+      +'<select class="task-select" data-st="'+a.id+'|'+t.id+'" style="border-color:'+sc+'44;color:'+sc+'" aria-label="Status">'
+      +'<option value="pendente"'+(t.status==='pendente'?' selected':'')+'>Pendente</option>'
+      +'<option value="em_curso"'+(t.status==='em_curso'?' selected':'')+'>Em Curso</option>'
+      +'<option value="concluido"'+(t.status==='concluido'?' selected':'')+'>Concluido</option>'
+      +'</select>'
+      +'<select class="task-select" data-rp="'+a.id+'|'+t.id+'" aria-label="Responsavel">'
+      +'<option value="Mestre"'+(t.responsible==='Mestre'?' selected':'')+'>Mestre</option>'
+      +'<option value="Aprendiz"'+(t.responsible==='Aprendiz'?' selected':'')+'>Aprendiz</option>'
+      +'</select>'
+      +'<input type="date" class="task-date" value="'+t.date+'" data-dt="'+a.id+'|'+t.id+'" aria-label="Data">'
+      +'<button class="task-notes-btn '+(hn?'has-notes':'')+'" data-nota="'+a.id+'|'+t.id+'" title="Notas">'
+      +'<i class="fas fa-pen-to-square"></i>'+(hn?'Ver':'Nota')+'</button>'
+      +'</div></div>';
+  });
+  h+='</div>';
+
+  $('contentArea').innerHTML=h;
+
+  // Bind botão voltar
+  $('backBtn').addEventListener('click',function(){goView('dashboard')});
+
+  // Bind checkboxes
+  $('contentArea').querySelectorAll('[data-chk]').forEach(function(el){
+    el.addEventListener('click',function(){
+      var parts=this.getAttribute('data-chk').split('|');
+      toggleComplete(parseInt(parts[0]),parts[1]);
+    });
+  });
+
+  // Bind selects de status
+  $('contentArea').querySelectorAll('[data-st]').forEach(function(el){
+    el.addEventListener('change',function(){
+      var parts=this.getAttribute('data-st').split('|');
+      changeStatus(parseInt(parts[0]),parts[1],this.value);
+    });
+  });
+
+  // Bind selects de responsável
+  $('contentArea').querySelectorAll('[data-rp]').forEach(function(el){
+    el.addEventListener('change',function(){
+      var parts=this.getAttribute('data-rp').split('|');
+      changeResp(parseInt(parts[0]),parts[1],this.value);
+    });
+  });
+
+  // Bind datas
+  $('contentArea').querySelectorAll('[data-dt]').forEach(function(el){
+    el.addEventListener('change',function(){
+      var parts=this.getAttribute('data-dt').split('|');
+      changeDate(parseInt(parts[0]),parts[1],this.value);
+    });
+  });
+
+  // Bind notas
+  $('contentArea').querySelectorAll('[data-nota]').forEach(function(el){
+    el.addEventListener('click',function(){
+      var parts=this.getAttribute('data-nota').split('|');
+      openNotes(parseInt(parts[0]),parts[1]);
+    });
+  });
+}
+
+/* ============================================================
+   INTERAÇÕES COM TAREFAS
+   ============================================================ */
+function findTask(aid,tid){var a=D.axes.find(function(x){return x.id===aid});if(!a)return null;return a.tasks.find(function(x){return x.id===tid})||null}
+
+function toggleComplete(aid,tid){
+  var t=findTask(aid,tid);if(!t)return;
+  t.status=t.status==='concluido'?'pendente':'concluido';
+  save();buildSidebar();renderAxis(aid);
+  if(t.status==='concluido') toast('Tarefa concluida.','success');
+}
+
+function changeStatus(aid,tid,val){
+  var t=findTask(aid,tid);if(!t)return;
+  t.status=val;save();buildSidebar();renderAxis(aid);
+}
+
+function changeResp(aid,tid,val){
+  var t=findTask(aid,tid);if(!t)return;
+  t.responsible=val;save();toast('Responsavel atualizado.','info');
+}
+
+function changeDate(aid,tid,val){
+  var t=findTask(aid,tid);if(!t)return;
+  t.date=val;save();
+}
+
+/* ============================================================
+   EDITOR DE NOTAS
+   ============================================================ */
+function openNotes(aid,tid){
+  var t=findTask(aid,tid);if(!t)return;
+  var short=t.text.length>50?t.text.substring(0,50)+'...':t.text;
+  $('modalTitle').textContent='NOTAS DA TAREFA';
+  $('modalContent').innerHTML='<div style="font-size:.82rem;color:#64748b;margin-bottom:14px;padding:10px 14px;background:rgba(6,10,19,.5);border:1px solid #1a2236;border-radius:2px">'+short+'</div>'
+    +'<textarea class="modal-textarea" id="notesTA" placeholder="Registre suas observacoes aqui...">'+(t.notes||'')+'</textarea>'
+    +'<div class="modal-actions">'
+    +'<button class="modal-btn modal-btn-cancel" id="notaCancel">Cancelar</button>'
+    +'<button class="modal-btn modal-btn-save" id="notaSave">SALVAR NOTAS</button>'
+    +'</div>';
+  openModal();
+  setTimeout(function(){var ta=$('notesTA');if(ta)ta.focus()},100);
+  $('notaCancel').onclick=closeModal;
+  $('notaSave').onclick=function(){
+    var ta=$('notesTA');
+    if(!ta)return;
+    t.notes=ta.value;save();closeModal();renderAxis(aid);toast('Notas salvas.','success');
+  };
+}
+
+/* ============================================================
+   RESET COM CONFIRMAÇÃO
+   ============================================================ */
+function confirmReset(){
+  $('modalTitle').textContent='CONFIRMACAO';
+  $('modalContent').innerHTML='<p class="confirm-text">Tem certeza que deseja resetar todos os dados do Dia 12?</p>'
+    +'<p class="confirm-warn">Esta acao nao pode ser desfeita. Todo o progresso sera perdido.</p>'
+    +'<div class="modal-actions">'
+    +'<button class="modal-btn modal-btn-cancel" id="resetCancel">Cancelar</button>'
+    +'<button class="modal-btn modal-btn-save" style="border-color:var(--urgent);color:var(--urgent);background:rgba(239,68,68,.08)" id="resetConfirm">CONFIRMAR RESET</button>'
+    +'</div>';
+  openModal();
+  $('resetCancel').onclick=closeModal;
+  $('resetConfirm').onclick=function(){
+    closeModal();D=defaultData();save();buildSidebar();
+    if(CV==='dashboard')renderDash();else if(CV==='axis')renderAxis(CA);
+    toast('Dados resetados com sucesso.','info');
+  };
+}
+
+/* ============================================================
+   BIND DE EVENTOS GLOBAIS
+   ============================================================ */
+document.addEventListener('DOMContentLoaded',function(){
+  // Login form
+  $('loginForm').addEventListener('submit',function(e){e.preventDefault();doLogin()});
+
+  // Sidebar toggles
+  $('hamburgerBtn').addEventListener('click',toggleSB);
+  $('sidebarOverlay').addEventListener('click',closeSB);
+
+  // Dashboard nav
+  $('navDashboard').addEventListener('click',function(){goView('dashboard')});
+
+  // Footer buttons
+  $('btnReset').addEventListener('click',confirmReset);
+  $('btnLogout').addEventListener('click',doLogout);
+
+  // Modal overlay close
+  $('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal()});
+
+  // Escape fecha modal
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal()});
+
+  // Verificar sessão existente
+  if(!checkSess()){
+    $('loginScreen').style.display='flex';
+  }
+});
+</script>
+</body>
+</html>
